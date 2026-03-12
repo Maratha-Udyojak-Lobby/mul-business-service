@@ -112,11 +112,9 @@ async def create_business(
     if not user_id:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required")
 
-    business = Business(
-        **data.model_dump(),
-        owner_id=user_id,
-        category=data.category.lower()
-    )
+    payload = data.model_dump()
+    payload["category"] = data.category.lower()
+    business = Business(**payload, owner_id=user_id)
     db.add(business)
     db.commit()
     db.refresh(business)
